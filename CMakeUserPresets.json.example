@@ -1,0 +1,42 @@
+{
+  "version": 7,
+  "$comment": "Template. Copy to CMakeUserPresets.json, then replace both placeholders with the real paths on this machine. See docs/environment.md.",
+  "configurePresets": [
+    {
+      "name": "local",
+      "hidden": true,
+      "inherits": "windows",
+      "$comment": "Qt and vcpkg locations differ per machine and must not be committed.",
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "<Qt-kit-dir>",
+        "CMAKE_TOOLCHAIN_FILE": "<vcpkg-dir>/scripts/buildsystems/vcpkg.cmake"
+      }
+    },
+    {
+      "name": "local-debug",
+      "displayName": "Local Debug",
+      "inherits": "local",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "local-release",
+      "displayName": "Local Release",
+      "inherits": "local",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "local-debug",
+      "configurePreset": "local-debug"
+    },
+    {
+      "name": "local-release",
+      "configurePreset": "local-release"
+    }
+  ]
+}

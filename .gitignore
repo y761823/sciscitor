@@ -9,6 +9,10 @@
 *.so.*
 *.dll
 *.dylib
+*.exe
+
+# vcpkg
+vcpkg_installed/
 
 # Qt-es
 object_script.*.Release
@@ -39,6 +43,13 @@ target_wrapper.*
 
 # QtCreator
 *.autosave
+.qtcreator/
+
+# Visual Studio
+.vs/
+
+# Logs
+*.log
 
 # QtCreator Qml
 *.qmlproject.user
@@ -46,6 +57,7 @@ target_wrapper.*
 
 # QtCreator CMake
 CMakeLists.txt.user*
+CMakeUserPresets.json
 
 # QtCreator 4.8< compilation database
 compile_commands.json
