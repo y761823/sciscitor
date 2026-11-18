@@ -1,12 +1,30 @@
-# Go toolchain: prefer PATH, fall back to mise (go version is pinned in mise.toml)
+# Go toolchain: required on PATH. A Go provided by mise's global configuration
+# is accepted as a fallback, but the project itself does not depend on mise.
 find_program(GO_EXECUTABLE go)
 if(GO_EXECUTABLE)
     set(GO_CMD "${GO_EXECUTABLE}")
 else()
+    # A Go coming from mise's global config is still accepted, but only if mise
+    # can actually resolve one: verify it here so a missing toolchain fails at
+    # configure time instead of during the build.
+    set(_mise_go_available FALSE)
     find_program(MISE_EXECUTABLE mise)
-    if(NOT MISE_EXECUTABLE)
+    if(MISE_EXECUTABLE)
+        execute_process(
+            COMMAND "${MISE_EXECUTABLE}" exec -- go version
+            RESULT_VARIABLE _mise_go_status
+            OUTPUT_QUIET
+            ERROR_QUIET)
+        if(_mise_go_status EQUAL 0)
+            set(_mise_go_available TRUE)
+        endif()
+    endif()
+
+    if(NOT _mise_go_available)
         message(FATAL_ERROR
-            "Neither 'go' nor 'mise' was found. Run 'mise install' and make sure mise is on PATH.")
+            "Go 1.25+ was not found on PATH.\n"
+            "Install it with 'winget install GoLang.Go' or the official installer.\n"
+            "See docs/environment.md for details.")
     endif()
     set(GO_CMD "${MISE_EXECUTABLE}" exec -- go)
 endif()

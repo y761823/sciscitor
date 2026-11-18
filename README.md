@@ -11,7 +11,7 @@ AI Desktop —— 基于 Qt6 + C++20 + Go 构建的 Windows AI 桌面应用。
 | AI | Ollama、OpenAI Compatible API |
 | Storage | SQLite |
 | Build | CMake、vcpkg |
-| Toolchain | mise |
+| Toolchain | Visual Studio 2022（MSVC v143） |
 
 ## 环境配置
 

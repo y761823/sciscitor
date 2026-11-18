@@ -9,10 +9,16 @@
 | Windows | 11 x64 | — |
 | Visual Studio | 2022（MSVC v143） | 手工安装，勾选「使用 C++ 的桌面开发」 |
 | Qt | 6.12（msvc2022_64） | Qt Online Installer |
-| Go | 1.25 | 由 mise 安装 |
+| Go | 1.25+ | `winget install GoLang.Go` 或官方安装包 |
 | CMake | 3.27+ | `bootstrap.ps1` |
 | Ninja | 任意 | `bootstrap.ps1` |
 | vcpkg | 可选 | 仅当 `vcpkg.json` 声明了 C++ 依赖时需要 |
+
+## Go 版本
+
+要求 Go ≥ 1.25，`server/go.mod` 中声明为 `go 1.25`。用官方安装包或 `winget install GoLang.Go` 安装即可：PATH 全局生效，IDE、CMake 都无需额外配置。
+
+Go 1.21+ 自带 `GOTOOLCHAIN=auto`：本地版本低于 `go.mod` 要求时会自动下载所需工具链，因此不必为了对齐版本额外装版本管理器。版本一致性由 CI（`.github/workflows/go.yml`）固定，本地只要满足下限即可。
 
 ## 安装步骤
 
@@ -24,7 +30,7 @@
 scripts/bootstrap.ps1
 ```
 
-会安装 mise、CMake、Ninja，然后执行 `mise install` 拉取 `mise.toml` 中锁定的 Go 版本。
+会安装 Go、CMake、Ninja。Go 仅在系统中找不到可用版本时才会安装，随后执行 `go mod download`。
 
 ### 2. 手动安装
 
@@ -73,7 +79,8 @@ JSON 中请使用正斜杠。`CMakeUserPresets.json` 已被 `.gitignore` 忽略�
 
 | 内容 | 配置文件 | 是否入库 | 说明 |
 | --- | --- | --- | --- |
-| Go 版本 | `mise.toml` | 是 | 由 mise 注入 PATH |
+| Go 版本（下限） | `server/go.mod` | 是 | `go 1.25`，工具链据此校验 |
+| CI 的 Go 版本 | `.github/workflows/go.yml` | 是 | 由 `actions/setup-go` 读取 `server/go.mod` |
 | C++ 依赖 | `vcpkg.json` | 是 | manifest 模式，锁定依赖与 baseline |
 | 通用构建配置 | `CMakePresets.json` | 是 | 不含机器路径，可直接共享 |
 | 本机路径 | `CMakeUserPresets.json` | 否 | Qt / vcpkg 位置 |
@@ -97,9 +104,9 @@ cmake --build --preset local-debug
 
 **CMake 找不到 go**
 
-mise 通过 shell hook（`mise activate`）注入 PATH，只有交互式终端里才生效。从开始菜单启动的 Qt Creator、CI、计划任务等进程看不到 go。
+Windows 上进程只在启动时读取环境变量。刚装完 Go 或修改 PATH 后，正在运行的 Qt Creator、IDE、终端都需要重启才能看到 `go`。
 
-`server/CMakeLists.txt` 已内置回退：找不到 `go` 时改用 `mise exec -- go`。若仍失败，确认 `mise` 本身在 PATH 中。
+`server/CMakeLists.txt` 优先使用 PATH 中的 `go`；找不到时才回退到 `mise exec -- go`（仅当 mise 全局配置了 Go 时生效）。两者都不可用时 configure 直接报错并提示安装方式。
 
 **configure 时提示 Qt6QmlAssetDownloaderPrivate 找不到**
 

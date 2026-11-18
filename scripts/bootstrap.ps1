@@ -15,13 +15,18 @@ if (-not (Get-Command winget -ErrorAction SilentlyContinue))
 }
 
 # ----------------------------------------------------
-# Mise
+# Go
 # ----------------------------------------------------
 
-winget install --id jdx.mise `
-    --accept-source-agreements `
-    --accept-package-agreements `
-    --silent
+# Go is installed from the official package; the build only needs any Go
+# >= 1.25 on PATH; see docs/environment.md.
+if (-not (Get-Command go -ErrorAction SilentlyContinue))
+{
+    winget install --id GoLang.Go `
+        --accept-source-agreements `
+        --accept-package-agreements `
+        --silent
+}
 
 # ----------------------------------------------------
 # CMake
@@ -50,18 +55,16 @@ $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
             [Environment]::GetEnvironmentVariable("Path", "User")
 
 # ----------------------------------------------------
-# mise install
-# ----------------------------------------------------
-
-mise install
-
-# ----------------------------------------------------
 # Go Proxy (China)
 # ----------------------------------------------------
 
-# go comes from mise and is not on PATH in non-interactive shells,
-# so invoke it through 'mise exec'.
-mise exec -- go env -w GOPROXY=https://goproxy.cn,direct
+if (-not (Get-Command go -ErrorAction SilentlyContinue))
+{
+    Write-Error "go still not on PATH. Open a new shell and re-run, or install Go 1.25+ manually."
+    exit 1
+}
+
+go env -w GOPROXY=https://goproxy.cn,direct
 
 # ----------------------------------------------------
 # go mod download
@@ -69,7 +72,7 @@ mise exec -- go env -w GOPROXY=https://goproxy.cn,direct
 
 Push-Location server
 
-mise exec -- go mod download
+go mod download
 
 Pop-Location
 
