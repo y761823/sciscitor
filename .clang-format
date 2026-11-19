@@ -1,0 +1,21 @@
+# Style for all C++ sources in this repository.
+BasedOnStyle: LLVM
+Language: Cpp
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+ContinuationIndentWidth: 4
+
+# Braces stay on the same line as functions, classes and control statements.
+BreakBeforeBraces: Attach
+AccessModifierOffset: -4
+
+PointerAlignment: Right
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+IncludeBlocks: Preserve
+SortIncludes: CaseSensitive

@@ -22,7 +22,7 @@ else()
 
     if(NOT _mise_go_available)
         message(FATAL_ERROR
-            "Go 1.25+ was not found on PATH.\n"
+            "Go 1.26+ was not found on PATH.\n"
             "Install it with 'winget install GoLang.Go' or the official installer.\n"
             "See docs/environment.md for details.")
     endif()
@@ -53,3 +53,7 @@ add_custom_command(
 )
 
 add_custom_target(sciscitor_server ALL DEPENDS "${SERVER_EXE}")
+
+# Installed next to the client executable so the client finds it in the same
+# directory.
+install(PROGRAMS "${SERVER_EXE}" DESTINATION ${CMAKE_INSTALL_BINDIR})

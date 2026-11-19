@@ -19,7 +19,7 @@ if (-not (Get-Command winget -ErrorAction SilentlyContinue))
 # ----------------------------------------------------
 
 # Go is installed from the official package; the build only needs any Go
-# >= 1.25 on PATH; see docs/environment.md.
+# >= 1.26 on PATH; see docs/environment.md.
 if (-not (Get-Command go -ErrorAction SilentlyContinue))
 {
     winget install --id GoLang.Go `
@@ -60,7 +60,7 @@ $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
 
 if (-not (Get-Command go -ErrorAction SilentlyContinue))
 {
-    Write-Error "go still not on PATH. Open a new shell and re-run, or install Go 1.25+ manually."
+    Write-Error "go still not on PATH. Open a new shell and re-run, or install Go 1.26+ manually."
     exit 1
 }
 

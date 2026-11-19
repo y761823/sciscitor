@@ -16,5 +16,7 @@ foreach(_var CMAKE_PREFIX_PATH CMAKE_TOOLCHAIN_FILE)
     endif()
 endforeach()
 
+include(GNUInstallDirs)
+
 add_subdirectory(client)
 add_subdirectory(server)

@@ -5,86 +5,73 @@ import QtQuick.Controls.Basic
 
 ApplicationWindow {
     id: window
-    width: 640
-    height: 480
-    minimumWidth: 200
-    minimumHeight: 250
+    width: 720
+    height: 560
+    minimumWidth: 360
+    minimumHeight: 320
     visible: true
-    title: qsTr("Hello World")
-    property bool lightMode: Application.styleHints.colorScheme === Qt.Light
-    property color reallyDark: "#1f1f1f"
-    property color dark: "#262626"
-    property color reallyLight: "#e7e7e7"
-    property color light: "#e0e0e0"
+    title: qsTr("Sciscitor")
 
-    GridLayout {
-        id: grid
-        columns: width < 400 ? 1 : 2
-        rowSpacing: 0
-        columnSpacing: 0
+    ColumnLayout {
         anchors.fill: parent
+        anchors.margins: 16
+        spacing: 12
 
-        Rectangle {
-            id: rectangle1
-            color: window.lightMode ? window.reallyLight : window.reallyDark
-            Layout.fillHeight: true
+        RowLayout {
             Layout.fillWidth: true
+            spacing: 8
 
-            ColumnLayout {
-                anchors.fill: parent
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            Label {
+                text: qsTr("Model")
+            }
 
-                Label {
-                    id: text1
-                    color: window.lightMode ? window.dark : window.light
-                    font.pixelSize: 120
-                    fontSizeMode: Text.Fit
-                    text: qsTr("Hello World")
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    Layout.margins: 16
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
+            TextField {
+                id: modelField
+                Layout.fillWidth: true
+                text: "qwen3:14b"
+                placeholderText: qsTr("Model name")
             }
         }
 
-        Rectangle {
-            id: rectangle2
-            color: window.lightMode ? window.light : window.dark
-            Layout.fillHeight: true
+        TextArea {
+            id: promptField
             Layout.fillWidth: true
+            Layout.preferredHeight: 140
+            wrapMode: TextArea.Wrap
+            placeholderText: qsTr("Enter one or more sentences")
+        }
 
-            ColumnLayout {
-                anchors.fill: parent
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+        Button {
+            id: sendButton
+            Layout.fillWidth: true
+            text: backend.busy ? qsTr("Thinking…") : qsTr("Send")
+            enabled: !backend.busy
 
-                Button {
-                    id: button1
-                    text: window.lightMode ? qsTr("\u263D  Dark mode")
-                                           : qsTr("\u263C  Light mode")
-                    Layout.bottomMargin: 16
-                    Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-
-                    contentItem: Text {
-                        text: button1.text
-                        color: window.lightMode ? window.light : window.dark
-                        font: button1.font
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
-
-                    background: Rectangle {
-                        implicitWidth: 120
-                        implicitHeight: 36
-                        radius: 8
-                        color: window.lightMode ? window.dark : window.light
-                    }
-
-                    onClicked: window.lightMode = !window.lightMode
-                }
+            onClicked: {
+                answerField.text = ""
+                backend.request(promptField.text, modelField.text)
             }
+        }
+
+        TextArea {
+            id: answerField
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            readOnly: true
+            wrapMode: TextArea.Wrap
+            placeholderText: qsTr("Answer")
         }
     }
 
+    Connections {
+        target: backend
+
+        function onAnswered(text) {
+            answerField.text = text
+        }
+
+        function onFailed(message) {
+            answerField.text = message
+        }
+    }
 }

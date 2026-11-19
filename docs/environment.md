@@ -9,14 +9,14 @@
 | Windows | 11 x64 | — |
 | Visual Studio | 2022（MSVC v143） | 手工安装，勾选「使用 C++ 的桌面开发」 |
 | Qt | 6.12（msvc2022_64） | Qt Online Installer |
-| Go | 1.25+ | `winget install GoLang.Go` 或官方安装包 |
+| Go | 1.26+ | `winget install GoLang.Go` 或官方安装包 |
 | CMake | 3.27+ | `bootstrap.ps1` |
 | Ninja | 任意 | `bootstrap.ps1` |
 | vcpkg | 可选 | 仅当 `vcpkg.json` 声明了 C++ 依赖时需要 |
 
 ## Go 版本
 
-要求 Go ≥ 1.25，`server/go.mod` 中声明为 `go 1.25`。用官方安装包或 `winget install GoLang.Go` 安装即可：PATH 全局生效，IDE、CMake 都无需额外配置。
+要求 Go ≥ 1.26，`server/go.mod` 中声明为 `go 1.26`。用官方安装包或 `winget install GoLang.Go` 安装即可：PATH 全局生效，IDE、CMake 都无需额外配置。
 
 Go 1.21+ 自带 `GOTOOLCHAIN=auto`：本地版本低于 `go.mod` 要求时会自动下载所需工具链，因此不必为了对齐版本额外装版本管理器。版本一致性由 CI（`.github/workflows/go.yml`）固定，本地只要满足下限即可。
 
@@ -79,7 +79,7 @@ JSON 中请使用正斜杠。`CMakeUserPresets.json` 已被 `.gitignore` 忽略�
 
 | 内容 | 配置文件 | 是否入库 | 说明 |
 | --- | --- | --- | --- |
-| Go 版本（下限） | `server/go.mod` | 是 | `go 1.25`，工具链据此校验 |
+| Go 版本（下限） | `server/go.mod` | 是 | `go 1.26`，工具链据此校验 |
 | CI 的 Go 版本 | `.github/workflows/go.yml` | 是 | 由 `actions/setup-go` 读取 `server/go.mod` |
 | C++ 依赖 | `vcpkg.json` | 是 | manifest 模式，锁定依赖与 baseline |
 | 通用构建配置 | `CMakePresets.json` | 是 | 不含机器路径，可直接共享 |
